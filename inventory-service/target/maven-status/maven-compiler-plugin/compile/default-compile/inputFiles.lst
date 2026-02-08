@@ -1,0 +1,8 @@
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\config\KafkaConfig.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\consumer\OrderEventConsumer.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\controller\InventoryController.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\dto\OrderEventDTO.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\entity\Inventory.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\InventoryServiceApplication.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\repository\InventoryRepository.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\inventory-service\src\main\java\org\aadi\service\InventoryService.java

@@ -1,0 +1,10 @@
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\common\dto\OrderRequestDTO.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\common\mapper\OrderDTOtoEntityMapper.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\common\mapper\OrderEntityToOutboxEntityMapper.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\controller\OrderController.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\entity\Order.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\entity\Outbox.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\OrderServiceApplication.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\repository\OrderRepository.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\repository\OutboxRepository.java
+C:\Studies\code\microservices-code\springboot-transactional-outbox-pattern\order-service\src\main\java\org\aadi\service\OrderService.java
