@@ -11,13 +11,19 @@ The transactional outbox pattern is needed because @Transactional works only wit
 
 ## Solution - Transactional Outbox Pattern with Poller Service
 ![pass](./screenshots/pass.png)
-A poller service in the transactional outbox pattern is a separate component that periodically (say, Schedule it with cron job) scans the outbox table for unpublished events and sends them to the message broker. After successful delivery, it marks events as processed, ensuring reliable, retryable message publication and eventual consistency.
+A poller service in the transactional outbox pattern is a separate component that periodically (say, Schedule it with cron job, here in each fixed rate of 60 sec) scans the outbox table for unpublished events and sends them to the message broker. After successful delivery, it marks events as processed, ensuring reliable, retryable message publication and eventual consistency.
+
+## Alternative Approaches
+
+### CDC (Change Data Capture)
+While polling is simple but can introduce high DB load and latency, you could use a CDC tool like **Debezium** to capture database changes and publish them to Kafka. This approach eliminates the need for an outbox table and poller service, but requires more complex infrastructure setup.
+
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Docker and Docker Compose installed
-- Ports 3306, 3308, 8081, 9092, 9191, 9192, 9292 available
+- Ports 3306, 3308, 8081, 9092, 9191, 9192, 9193 available
 
 ### Start All Services
 ```bash
@@ -40,9 +46,9 @@ docker ps
 ```
 
 #### 2. Access Swagger UI for Testing
-- **Order Service**: http://localhost:9191/swagger-ui.html
-- **Order Poller**: http://localhost:9292/swagger-ui.html  
-- **Inventory Service**: http://localhost:9192/swagger-ui.html
+- **Order Service**: http://localhost:9191/swagger-ui/index.html
+- **Order Poller**: http://localhost:9193/swagger-ui/index.html  
+- **Inventory Service**: http://localhost:9192/swagger-ui/index.html
 - **Kafka UI**: http://localhost:8081
 
 #### 3. Check Initial Inventory
@@ -52,7 +58,7 @@ curl http://localhost:9192/api/inventory
 Expected: Laptop quantity = 50
 
 #### 4. Create Order via Swagger UI
-1. Open http://localhost:9191/swagger-ui.html
+1. Open http://localhost:9191/swagger-ui/index.html
 2. Expand "Order Management" 
 3. Use POST /api/orders
 ```json
@@ -80,12 +86,12 @@ Expected: Laptop quantity = 48 (reduced by 2)
 
 ### Check Outbox Messages
 ```bash
-curl http://localhost:9292/api/poller/outbox
+curl http://localhost:9193/api/poller/outbox
 ```
 
 ### Trigger Manual Poll
 ```bash
-curl -X POST http://localhost:9292/api/poller/trigger
+curl -X POST http://localhost:9193/api/poller/trigger
 ```
 
 ### Check Service Logs
@@ -98,6 +104,20 @@ docker logs inventory-service
 ## 📊 Architecture Flow
 ```
 Client → Order Service → Order DB + Outbox → Order Poller → Kafka → Inventory Service → Inventory DB
+```
+
+## Architecture
+```
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐     ┌─────────────────┐      
+│ OrderService│──▶│   Kafka      │───▶│Order Poller │───▶│InventoryService │
+│ (Port 9191) │    │ (KRaft Mode) │    │ (Port 9193) │     │ (Port 9192)     │
+└─────────────┘    │ (Port 9092)  │    └─────────────┘     └─────────────────┘
+        │          └──────────────┘           │                    │
+        ▼                 │                   ▼                    ▼
+┌─────────────┐    ┌──────▼───────┐    ┌─────────────┐      ┌──────────────────┐
+│MySQL:3306   │    │   Kafka UI   │    │MySQL:3307   │      │ MySQL:3308       │
+│order_service│    │ (Port 8081)  │    │order_poller │      │inventory_service │
+└─────────────┘    └──────────────┘    └─────────────┘      └──────────────────┘
 ```
 
 ## Expected Behavior
@@ -130,23 +150,9 @@ docker compose down
 | MySQL (order-service)     | 3306 | Database for order service                     |
 | MySQL (inventory-service) | 3308 | Database for inventory service                 |
 | Order Service             | 9191 | REST API for creating orders                   |
-| Order Poller              | 9292 | Polls outbox and publishes to Kafka            |
+| Order Poller              | 9193 | Polls outbox and publishes to Kafka            |
 | Inventory Service         | 9192 | Consumes events and updates inventory          |
 .....................................................................................
-```
-
-## Architecture
-```
-┌─────────────┐    ┌──────────────┐    ┌─────────────┐     ┌─────────────────┐      
-│ OrderService│──▶│   Kafka      │───▶│Order Poller │───▶│InventoryService │
-│ (Port 9191) │    │ (KRaft Mode) │    │ (Port 9292) │     │ (Port 9192)     │
-└─────────────┘    │ (Port 9092)  │    └─────────────┘     └─────────────────┘
-        │          └──────────────┘           │                    │
-        ▼                 │                   ▼                    ▼
-┌─────────────┐    ┌──────▼───────┐    ┌─────────────┐      ┌──────────────────┐
-│MySQL:3306   │    │   Kafka UI   │    │MySQL:3307   │      │ MySQL:3308       │
-│order_service│    │ (Port 8081)  │    │order_poller │      │inventory_service │
-└─────────────┘    └──────────────┘    └─────────────┘      └──────────────────┘
 ```
 
 ## Initial Data Setup

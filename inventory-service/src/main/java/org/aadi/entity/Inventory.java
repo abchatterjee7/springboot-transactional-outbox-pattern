@@ -20,8 +20,12 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "product_name")
     private String productName;
+    @Column(name = "product_type")
     private String productType;
+    @Column(name = "stock_quantity")
     private int stockQuantity;
+    @Column(name = "price")
     private BigDecimal price;
 }

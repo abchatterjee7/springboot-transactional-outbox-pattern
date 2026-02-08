@@ -23,8 +23,8 @@ public class SwaggerConfig {
                                 .name("Order Poller Service Team")
                                 .email("order-poller-service@example.com")))
                 .servers(List.of(
-                        new Server().url("http://localhost:9292").description("Local Server"),
-                        new Server().url("http://order-poller:9292").description("Docker Server")
+                        new Server().url("http://localhost:9193").description("Local Server"),
+                        new Server().url("http://order-poller:9193").description("Docker Server")
                 ));
     }
 }

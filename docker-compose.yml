@@ -49,7 +49,7 @@ services:
       MYSQL_PASSWORD: root
     volumes:
       - mysql_order_data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d
+      - ./mysql-init/order-service-init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - outbox-network
     healthcheck:
@@ -71,7 +71,7 @@ services:
       MYSQL_PASSWORD: root
     volumes:
       - mysql_inventory_data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d
+      - ./mysql-init/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - outbox-network
     healthcheck:
@@ -132,16 +132,13 @@ services:
     hostname: order-poller
     container_name: order-poller
     ports:
-      - "9292:9292"
+      - "9193:9193"
     environment:
       SPRING_APPLICATION_NAME: order-poller
       ORDER_POLLER_TOPIC_NAME: unprocessed-order-events
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-order-service:3306/order_service_db
       SPRING_DATASOURCE_USERNAME: app_user
       SPRING_DATASOURCE_PASSWORD: root
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
-      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
     depends_on:
       mysql-order-service:
         condition: service_healthy
@@ -151,7 +148,7 @@ services:
       - outbox-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9292/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9193/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -40,7 +40,7 @@ ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 FROM base AS order-poller
 WORKDIR /app
 COPY --from=builder /app/order-poller/target/*.jar app.jar
-EXPOSE 9292
+EXPOSE 9193
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 
 # Inventory Service
