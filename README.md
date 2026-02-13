@@ -3,9 +3,12 @@
 ## Overview
 This project demonstrates the **Transactional Outbox Pattern** with a **Poller Service** for reliable message publishing in distributed systems.
 
-When client provides order, order_service_db will have two tables both will get updated: order_table & outbox_table. order-poller-service job is to take data from outbox_table of order_service_db based on isProcessed column is false (that is not processed i.e. 0), and push to Kafka based on latest scheduled poll. Then from Kafka, data will go to inventory_service_db where stock will be updated (subtract number of quantity of stocks purchased in order).
+The project addresses the challenge of maintaining data consistency across distributed systems by ensuring that database updates and message publishing occur reliably. It utilizes a Poller Service to scan an outbox table and relay events to Kafka, which then triggers updates in an inventory service. The technical stack features Docker, MySQL, and Swagger UI to facilitate easy deployment and testing of the end-to-end workflow. By decoupling the initial transaction from message delivery, the system achieves eventual consistency and prevents data loss during service failures. Detailed documentation and architectural diagrams are included to help developers understand the integration of distributed messaging and persistent storage.
 
 ## Why Transactional Outbox Pattern
+![unnamed.png](./screenshots/unnamed.png)
+When client provides order, order_service_db will have two tables both will get updated: order_table & outbox_table. order-poller-service job is to take data from outbox_table of order_service_db based on isProcessed column is false (that is not processed i.e. 0), and push to Kafka based on latest scheduled poll. Then from Kafka, data will go to inventory_service_db where stock will be updated (subtract number of quantity of stocks purchased in order).
+
 ![fail](./screenshots/fail.png)
 The transactional outbox pattern is needed because @Transactional works only within a single service and database. In microservices, database updates and message publishing can't be atomic. Without an outbox, failures cause inconsistent data across services like order, payment, and inventory, breaking reliability and eventual consistency.
 
