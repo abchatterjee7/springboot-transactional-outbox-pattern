@@ -112,15 +112,15 @@ Client → Order Service → Order DB + Outbox → Order Poller → Kafka → In
 ## Architecture
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐     ┌─────────────────┐      
-│ OrderService│──▶│   Kafka      │───▶│Order Poller │───▶│InventoryService │
-│ (Port 9191) │    │ (KRaft Mode) │    │ (Port 9193) │     │ (Port 9192)     │
-└─────────────┘    │ (Port 9092)  │    └─────────────┘     └─────────────────┘
-        │          └──────────────┘           │                    │
-        ▼                 │                   ▼                    ▼
-┌─────────────┐    ┌──────▼───────┐    ┌─────────────┐      ┌──────────────────┐
-│MySQL:3306   │    │   Kafka UI   │    │MySQL:3307   │      │ MySQL:3308       │
-│order_service│    │ (Port 8081)  │    │order_poller │      │inventory_service │
-└─────────────┘    └──────────────┘    └─────────────┘      └──────────────────┘
+│ OrderService│ ──▶│ Order Poller │───▶│    Kafka    │───▶ │InventoryService │
+│ (Port 9191) │    │ (Port 9193)  │    │ (Port 9092) │     │ (Port 9192)     │
+└─────────────┘    │              │    | (KRaft Mode)|     └─────────────────┘
+        │          └──────────────┘    └─────────────┘              │
+        ▼                                    │                      ▼
+┌─────────────┐                        ┌─────▼───────┐      ┌──────────────────┐
+│MySQL:3306   │                        │  Kafka UI   │      │ MySQL:3308       │
+│order_service│                        │ (Port 8081) │      │inventory_service │
+└─────────────┘                        └─────────────┘      └──────────────────┘
 ```
 
 ## Expected Behavior
